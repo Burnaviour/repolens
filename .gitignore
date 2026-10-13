@@ -15,4 +15,3 @@ wheels/
 
 # repolens output when run on itself
 .repolens/
-repolens-report/

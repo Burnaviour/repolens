@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+import webbrowser
 from pathlib import Path
 from typing import Annotated
 
@@ -14,6 +15,7 @@ from rich.table import Table
 from repolens import __version__
 from repolens.builder import build_graph
 from repolens.graph import CodeGraph
+from repolens.render.html import SOURCE_BUDGET, collect_sources, render_report
 
 OUTPUT_DIR = ".repolens"
 
@@ -70,6 +72,68 @@ def scan(
     quiet: Annotated[bool, typer.Option("--quiet", "-q", help="Only print errors.")] = False,
 ) -> None:
     """Analyse a repository and write its code graph (graph.json)."""
+    graph, elapsed = _scan(path, exclude, quiet)
+    if output == "-":
+        typer.echo(graph.to_json())
+    else:
+        target = Path(output) if output else _output_dir(path) / "graph.json"
+        _write(target, graph.to_json() + "\n", quiet)
+    if not quiet:
+        _print_summary(graph, elapsed)
+
+
+@app.command()
+def build(
+    path: Annotated[
+        Path,
+        typer.Argument(exists=True, file_okay=False, resolve_path=True, help="Repository to map."),
+    ] = Path("."),
+    output: Annotated[
+        Path | None,
+        typer.Option(
+            "--output", "-o", help=f"Report file. Default: <path>/{OUTPUT_DIR}/report.html"
+        ),
+    ] = None,
+    exclude: Annotated[
+        list[str] | None,
+        typer.Option("--exclude", "-e", help="Extra gitignore-style pattern to skip. Repeatable."),
+    ] = None,
+    source: Annotated[
+        bool | None,
+        typer.Option(
+            "--source/--no-source",
+            help="Embed source code so the report can show it. Default: only up to 8 MB of Python.",
+        ),
+    ] = None,
+    open_report: Annotated[
+        bool, typer.Option("--open", help="Open the report in your browser when done.")
+    ] = False,
+    quiet: Annotated[bool, typer.Option("--quiet", "-q", help="Only print errors.")] = False,
+) -> None:
+    """Build an interactive map of a repository as one offline HTML file."""
+    graph, elapsed = _scan(path, exclude, quiet)
+    sources = None
+    if source is not False:
+        sources = collect_sources(path, graph, limit=None if source else SOURCE_BUDGET)
+        if sources is None and not quiet:
+            err.print(
+                "[yellow]Source code not embedded:[/yellow] more than "
+                f"{SOURCE_BUDGET // 1_000_000} MB of Python. Use --source to include it anyway."
+            )
+    if output is None:
+        out_dir = _output_dir(path)
+        _write(out_dir / "graph.json", graph.to_json() + "\n", quiet=True)
+        target = out_dir / "report.html"
+    else:
+        target = output
+    _write(target, render_report(graph, sources), quiet)
+    if not quiet:
+        _print_summary(graph, elapsed)
+    if open_report:
+        webbrowser.open(target.resolve().as_uri())
+
+
+def _scan(path: Path, exclude: list[str] | None, quiet: bool) -> tuple[CodeGraph, float]:
     started = time.perf_counter()
     with Progress(
         TextColumn("[progress.description]{task.description}"),
@@ -85,31 +149,37 @@ def scan(
             exclude or [],
             progress=lambda done, total: bar.update(task, completed=done, total=total),
         )
-    elapsed = time.perf_counter() - started
-
-    if output == "-":
-        typer.echo(graph.to_json())
-    else:
-        target = Path(output) if output else _default_output(path)
-        try:
-            graph.write(target)
-        except OSError as exc:
-            err.print(f"[red]Could not write {target}:[/red] {exc.strerror or exc}")
-            raise typer.Exit(1) from None
-        if not quiet:
-            err.print(f"[green]Wrote[/green] {target}")
-    if not quiet:
-        _print_summary(graph, elapsed)
+    return graph, time.perf_counter() - started
 
 
-def _default_output(repo: Path) -> Path:
+def _output_dir(repo: Path) -> Path:
     out_dir = repo / OUTPUT_DIR
     out_dir.mkdir(exist_ok=True)
     # Like .pytest_cache: the folder ignores itself, so it is never committed by accident.
     ignore = out_dir / ".gitignore"
     if not ignore.exists():
         ignore.write_text("# Created by repolens\n*\n", encoding="utf-8")
-    return out_dir / "graph.json"
+    return out_dir
+
+
+def _write(target: Path, text: str, quiet: bool) -> None:
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text, encoding="utf-8")
+    except OSError as exc:
+        err.print(f"[red]Could not write {target}:[/red] {exc.strerror or exc}")
+        raise typer.Exit(1) from None
+    if not quiet:
+        size = len(text.encode("utf-8"))
+        err.print(f"[green]Wrote[/green] {target} ({_human_size(size)})")
+
+
+def _human_size(size: int) -> str:
+    for unit in ("B", "KB", "MB"):
+        if size < 1024 or unit == "MB":
+            return f"{size:.0f} {unit}" if unit == "B" else f"{size:.1f} {unit}"
+        size /= 1024
+    return f"{size} B"  # pragma: no cover
 
 
 def _print_summary(graph: CodeGraph, elapsed: float) -> None:

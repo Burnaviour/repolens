@@ -1,6 +1,6 @@
 from conftest import call_targets, edge
 
-from repolens.parsers.python_resolve import assign_module_names
+from wiringmap.parsers.python_resolve import assign_module_names
 
 # Module naming -----------------------------------------------------------------------
 

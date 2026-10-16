@@ -12,16 +12,16 @@ from rich.console import Console
 from rich.progress import BarColumn, MofNCompleteColumn, Progress, TextColumn
 from rich.table import Table
 
-from repolens import __version__
-from repolens.builder import build_graph
-from repolens.graph import CodeGraph
-from repolens.render.html import SOURCE_BUDGET, collect_sources, render_report
+from wiringmap import __version__
+from wiringmap.builder import build_graph
+from wiringmap.graph import CodeGraph
+from wiringmap.render.html import SOURCE_BUDGET, collect_sources, render_report
 
-OUTPUT_DIR = ".repolens"
+OUTPUT_DIR = ".wiringmap"
 
 app = typer.Typer(
-    name="repolens",
-    help="See how your codebase fits together: offline, interactive, AI optional.",
+    name="wiringmap",
+    help="See how your code is wired: offline, interactive, AI optional.",
     no_args_is_help=True,
     add_completion=False,
     pretty_exceptions_show_locals=False,
@@ -31,7 +31,7 @@ err = Console(stderr=True)
 
 def _version_callback(value: bool) -> None:
     if value:
-        typer.echo(f"repolens {__version__}")
+        typer.echo(f"wiringmap {__version__}")
         raise typer.Exit()
 
 
@@ -48,7 +48,7 @@ def main(
         ),
     ] = False,
 ) -> None:
-    """repolens turns a repository into an interactive map of its files, classes and functions."""
+    """wiringmap turns a repository into an interactive map of its files, classes and functions."""
 
 
 @app.command()
@@ -158,7 +158,7 @@ def _output_dir(repo: Path) -> Path:
     # Like .pytest_cache: the folder ignores itself, so it is never committed by accident.
     ignore = out_dir / ".gitignore"
     if not ignore.exists():
-        ignore.write_text("# Created by repolens\n*\n", encoding="utf-8")
+        ignore.write_text("# Created by wiringmap\n*\n", encoding="utf-8")
     return out_dir
 
 

@@ -1,4 +1,4 @@
-"""A tiny shop used to test repolens."""
+"""A tiny shop used to test wiringmap."""
 
 from .models import Order
 

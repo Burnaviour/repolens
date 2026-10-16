@@ -14,4 +14,4 @@ unmodified copies of the published npm packages.
 License texts are in [`licenses/`](licenses).
 
 To update one, run `npm pack <package>@<version>`, copy the file listed above out of
-the tarball, update this table, and check the result with `uv run repolens build . --open`.
+the tarball, update this table, and check the result with `uv run wiringmap build . --open`.

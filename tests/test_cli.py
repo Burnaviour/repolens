@@ -3,8 +3,8 @@ import json
 from conftest import SAMPLE_PROJECT
 from typer.testing import CliRunner
 
-from repolens import __version__
-from repolens.cli import app
+from wiringmap import __version__
+from wiringmap.cli import app
 
 runner = CliRunner()
 
@@ -12,7 +12,7 @@ runner = CliRunner()
 def test_version_flag():
     result = runner.invoke(app, ["--version"])
     assert result.exit_code == 0
-    assert result.output.strip() == f"repolens {__version__}"
+    assert result.output.strip() == f"wiringmap {__version__}"
 
 
 def test_no_args_shows_help():
@@ -24,9 +24,9 @@ def test_scan_writes_default_output_that_ignores_itself(make_repo):
     root = make_repo({"app.py": "def main():\n    pass\n"})
     result = runner.invoke(app, ["scan", str(root)])
     assert result.exit_code == 0, result.output
-    graph = json.loads((root / ".repolens" / "graph.json").read_text())
+    graph = json.loads((root / ".wiringmap" / "graph.json").read_text())
     assert "app:main" in {n["id"] for n in graph["nodes"]}
-    assert (root / ".repolens" / ".gitignore").read_text().splitlines()[-1] == "*"
+    assert (root / ".wiringmap" / ".gitignore").read_text().splitlines()[-1] == "*"
 
 
 def test_scan_to_stdout_prints_only_json():

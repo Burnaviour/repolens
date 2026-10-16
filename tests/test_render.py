@@ -4,12 +4,12 @@ import re
 from conftest import SAMPLE_PROJECT
 from typer.testing import CliRunner
 
-from repolens.cli import app
-from repolens.render import collect_sources, render_report
+from wiringmap.cli import app
+from wiringmap.render import collect_sources, render_report
 
 runner = CliRunner()
 
-DATA = re.compile(r'<script type="application/json" id="repolens-data">(.*?)</script>', re.S)
+DATA = re.compile(r'<script type="application/json" id="wiringmap-data">(.*?)</script>', re.S)
 
 
 def embedded(page: str) -> dict:
@@ -57,9 +57,9 @@ def test_build_command_writes_report_and_graph(make_repo):
     root = make_repo({"app.py": "def main():\n    pass\n"})
     result = runner.invoke(app, ["build", str(root), "-q"])
     assert result.exit_code == 0, result.output
-    page = (root / ".repolens" / "report.html").read_text(encoding="utf-8")
+    page = (root / ".wiringmap" / "report.html").read_text(encoding="utf-8")
     assert embedded(page)["sources"]["app.py"].startswith("def main")
-    assert json.loads((root / ".repolens" / "graph.json").read_text())["root_name"] == root.name
+    assert json.loads((root / ".wiringmap" / "graph.json").read_text())["root_name"] == root.name
 
 
 def test_build_without_source(make_repo, tmp_path_factory):
@@ -70,4 +70,4 @@ def test_build_without_source(make_repo, tmp_path_factory):
     page = out.read_text(encoding="utf-8")
     assert embedded(page)["sources"] == {}
     assert "SECRET" not in page
-    assert not (root / ".repolens").exists()  # an explicit -o leaves the repo untouched
+    assert not (root / ".wiringmap").exists()  # an explicit -o leaves the repo untouched

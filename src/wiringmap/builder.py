@@ -8,10 +8,10 @@ from collections import Counter
 from collections.abc import Callable, Iterable
 from pathlib import Path
 
-from repolens.graph import CodeGraph, Edge, EdgeKind, Node, NodeKind
-from repolens.parsers.python_ast import ModuleInfo, extract_module, read_source
-from repolens.parsers.python_resolve import PyModule, PythonResolver, assign_module_names
-from repolens.scanner import DEFAULT_MAX_FILE_SIZE, SourceFile, scan_repository
+from wiringmap.graph import CodeGraph, Edge, EdgeKind, Node, NodeKind
+from wiringmap.parsers.python_ast import ModuleInfo, extract_module, read_source
+from wiringmap.parsers.python_resolve import PyModule, PythonResolver, assign_module_names
+from wiringmap.scanner import DEFAULT_MAX_FILE_SIZE, SourceFile, scan_repository
 
 if sys.version_info >= (3, 11):
     import tomllib

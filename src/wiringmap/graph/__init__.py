@@ -1,4 +1,4 @@
-from repolens.graph.model import (
+from wiringmap.graph.model import (
     SCHEMA_VERSION,
     CodeGraph,
     Confidence,

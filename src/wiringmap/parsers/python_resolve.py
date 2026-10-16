@@ -1,7 +1,7 @@
 """Link extracted Python modules into the code graph.
 
 Static analysis of Python is best effort. Every call edge says how it was found
-(see :class:`repolens.graph.Confidence`), and calls that cannot be linked are counted
+(see :class:`wiringmap.graph.Confidence`), and calls that cannot be linked are counted
 on the calling function instead of being drawn.
 """
 
@@ -13,8 +13,8 @@ import sys
 from collections import defaultdict
 from dataclasses import dataclass
 
-from repolens.graph import CodeGraph, Confidence, Edge, EdgeKind, Node, NodeKind
-from repolens.parsers.python_ast import (
+from wiringmap.graph import CodeGraph, Confidence, Edge, EdgeKind, Node, NodeKind
+from wiringmap.parsers.python_ast import (
     ClassInfo,
     FunctionInfo,
     ImportBinding,

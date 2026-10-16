@@ -1,11 +1,11 @@
-# How repolens works
+# How wiringmap works
 
-This page is for people who want to understand or change repolens itself. To *use* it,
+This page is for people who want to understand or change wiringmap itself. To *use* it,
 see the [README](../README.md).
 
 ## Principles
 
-- **Offline by default.** Analysis is static: repolens reads files and never runs the
+- **Offline by default.** Analysis is static: wiringmap reads files and never runs the
   code it maps. The report is one HTML file with every library inlined, so opening it
   makes no network requests.
 - **Useful without AI.** Everything in the report comes from static analysis. AI
@@ -79,7 +79,7 @@ libraries are vendored in `render/static/vendor/` (versions in its README).
 The viewer is tested by building reports and opening them in a browser. A quick check:
 
 ```bash
-uv run repolens build . --open
+uv run wiringmap build . --open
 ```
 
 ### Size limits

@@ -4,7 +4,7 @@ import textwrap
 
 import pytest
 
-from repolens.parsers.python_ast import annotation_parts, extract_module, read_source
+from wiringmap.parsers.python_ast import annotation_parts, extract_module, read_source
 
 
 def extract(source: str):

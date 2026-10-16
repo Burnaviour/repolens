@@ -1,6 +1,6 @@
 # `graph.json` format
 
-`repolens scan` writes the code graph as one JSON file. Every other repolens feature
+`wiringmap scan` writes the code graph as one JSON file. Every other wiringmap feature
 (the HTML viewer, AI summaries, diffs) reads this file, and you can read it too.
 
 The current schema version is **1**. Nodes and edges are sorted, so scanning the same
@@ -12,7 +12,7 @@ diff and to commit.
 ```json
 {
   "schema_version": 1,
-  "generator": {"name": "repolens", "version": "0.1.0"},
+  "generator": {"name": "wiringmap", "version": "0.1.0"},
   "root_name": "my-project",
   "created_at": "2026-10-13T20:00:00+00:00",
   "meta": {"file_count": 42, "languages": {"python": 30, "markdown": 5}},

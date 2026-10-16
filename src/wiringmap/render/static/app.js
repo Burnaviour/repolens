@@ -1,10 +1,10 @@
-/* repolens viewer: draws graph.json as an explorable map. Runs fully offline. */
+/* wiringmap viewer: draws graph.json as an explorable map. Runs fully offline. */
 (function () {
   "use strict";
 
   const { html, render, useState, useEffect, useMemo, useRef, useCallback } = htmPreact;
 
-  const DATA = JSON.parse(document.getElementById("repolens-data").textContent);
+  const DATA = JSON.parse(document.getElementById("wiringmap-data").textContent);
   const G = DATA.graph;
   const SOURCES = DATA.sources || {};
   const ROOT = "dir:.";
@@ -440,7 +440,7 @@
       const restyle = () => cy.style(graphStyle());
       scheme.addEventListener("change", restyle);
       cyRef.current = cy;
-      window.repolens = { cy, graph: G }; // handy in the browser console
+      window.wiringmap = { cy, graph: G }; // handy in the browser console
       return () => (scheme.removeEventListener("change", restyle), cy.destroy());
     }, []);
 
@@ -911,7 +911,7 @@
     const when = G.created_at ? new Date(G.created_at).toLocaleString() : "";
     return html`<div class="pad welcome">
       <h2>${G.root_name}</h2>
-      <p>A map of how this code fits together, made by repolens ${G.generator.version}${when ? " on " + when : ""}.</p>
+      <p>A map of how this code is wired, made by wiringmap ${G.generator.version}${when ? " on " + when : ""}.</p>
       <ol>
         <li><b>Boxes are Python files.</b> Dashed boxes are folders: double-click one to open it.</li>
         <li><b>Arrows point to what a file imports.</b> Switch to “Calls” to see which files call into which.</li>
@@ -960,7 +960,7 @@
   const THEMES = ["auto", "light", "dark"];
   function loadTheme() {
     try {
-      return localStorage.getItem("repolens-theme") || "auto";
+      return localStorage.getItem("wiringmap-theme") || "auto";
     } catch (e) {
       return "auto";
     }
@@ -983,7 +983,7 @@
       if (theme === "auto") delete root.dataset.theme;
       else root.dataset.theme = theme;
       try {
-        localStorage.setItem("repolens-theme", theme);
+        localStorage.setItem("wiringmap-theme", theme);
       } catch (e) {}
     }, [theme]);
 
@@ -1035,7 +1035,7 @@
 
     return html`<div class="app">
       <header class="topbar">
-        <div class="brand"><h1>${G.root_name}</h1><span class="by">repolens</span></div>
+        <div class="brand"><h1>${G.root_name}</h1><span class="by">wiringmap</span></div>
         <div class="stats">
           <span class="stat"><b>${totalModules.toLocaleString()}</b> files</span>
           <span class="stat"><b>${(stats.nodes.class || 0).toLocaleString()}</b> classes</span>

@@ -1,15 +1,15 @@
-# repolens
+# wiringmap
 
-**See how your codebase fits together.** repolens turns any Python project into an
-interactive map: what every file uses, what uses it, and what breaks if you change it.
-It runs offline, produces one HTML file, and needs no AI.
+**See how your code is wired.** wiringmap turns any Python project into an interactive
+map: what every file uses, what uses it, and what breaks if you change it. It runs
+offline, produces one HTML file, and needs no AI.
 
-[![CI](https://github.com/Burnaviour/repolens/actions/workflows/ci.yml/badge.svg)](https://github.com/Burnaviour/repolens/actions/workflows/ci.yml)
+[![CI](https://github.com/Burnaviour/wiringmap/actions/workflows/ci.yml/badge.svg)](https://github.com/Burnaviour/wiringmap/actions/workflows/ci.yml)
 [![Python 3.10–3.13](https://img.shields.io/badge/python-3.10%E2%80%933.13-blue)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![Status: early](https://img.shields.io/badge/status-early%20preview-orange)
 
-![repolens exploring a FastAPI app: the folder map, what login.py uses, the 16 files that depend on models.py, search, a function's callers and callees, and its source](docs/images/demo.gif)
+![wiringmap exploring a FastAPI app: the folder map, what login.py uses, the 16 files that depend on models.py, search, a function's callers and callees, and its source](docs/images/demo.gif)
 
 <sub>Shown above: <a href="https://github.com/fastapi/full-stack-fastapi-template">fastapi/full-stack-fastapi-template</a>.</sub>
 
@@ -19,7 +19,7 @@ An AI agent wrote most of your code. It works, but you have never read most of i
 now you need to change something. Which file does what? What calls this function? What
 breaks if you touch it?
 
-repolens answers those questions in seconds, and your code never leaves your machine.
+wiringmap answers those questions in seconds, and your code never leaves your machine.
 
 ## Try it
 
@@ -27,10 +27,10 @@ You need [uv](https://docs.astral.sh/uv/getting-started/installation/). Then, in
 any Python project:
 
 ```bash
-uvx --from git+https://github.com/Burnaviour/repolens repolens build . --open
+uvx --from git+https://github.com/Burnaviour/wiringmap wiringmap build . --open
 ```
 
-This writes `.repolens/report.html` and opens it in your browser. The `.repolens/`
+This writes `.wiringmap/report.html` and opens it in your browser. The `.wiringmap/`
 folder ignores itself, so it is never committed by accident.
 
 ## What you get
@@ -53,7 +53,7 @@ folder ignores itself, so it is never committed by accident.
 
 ## Private by design
 
-- repolens **reads** your code; it never runs it.
+- wiringmap **reads** your code; it never runs it.
 - Nothing is uploaded. The report is one self-contained file that makes no network
   requests, so you can open it offline or send it to a teammate.
 - `--no-source` leaves your source code out of the report, keeping only its structure.
@@ -68,7 +68,7 @@ folder ignores itself, so it is never committed by accident.
 | `--source / --no-source` | Include the source code in the report. By default it is included when the project has under 8 MB of Python |
 | `-q` | No progress bar or summary |
 
-`repolens scan .` writes only the data, `graph.json`: every file, class and function
+`wiringmap scan .` writes only the data, `graph.json`: every file, class and function
 plus the imports, calls, inheritance and decorators between them. Its format is
 documented in [docs/graph-schema.md](docs/graph-schema.md), so you can build your own
 tools on it.
@@ -85,11 +85,11 @@ tools on it.
 
 ## Contributing
 
-Bug reports and ideas are welcome: please [open an issue](https://github.com/Burnaviour/repolens/issues).
+Bug reports and ideas are welcome: please [open an issue](https://github.com/Burnaviour/wiringmap/issues).
 To work on the code, see [CONTRIBUTING.md](CONTRIBUTING.md) and
-[how repolens works](docs/architecture.md).
+[how wiringmap works](docs/architecture.md).
 
-If repolens helps you, a ⭐ helps other people find it.
+If wiringmap helps you, a ⭐ helps other people find it.
 
 ## License
 
@@ -97,4 +97,4 @@ If repolens helps you, a ⭐ helps other people find it.
 [htm](https://github.com/developit/htm) (Apache-2.0),
 [Cytoscape.js](https://js.cytoscape.org) and
 [cytoscape-fcose](https://github.com/iVis-at-Bilkent/cytoscape.js-fcose) (MIT); see
-[their licenses](src/repolens/render/static/vendor/licenses).
+[their licenses](src/wiringmap/render/static/vendor/licenses).

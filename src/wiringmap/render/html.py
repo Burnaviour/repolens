@@ -7,8 +7,8 @@ import json
 import re
 from pathlib import Path
 
-from repolens.graph import CodeGraph, NodeKind
-from repolens.parsers.python_ast import read_source
+from wiringmap.graph import CodeGraph, NodeKind
+from wiringmap.parsers.python_ast import read_source
 
 STATIC = Path(__file__).parent / "static"
 

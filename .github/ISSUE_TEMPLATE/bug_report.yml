@@ -13,7 +13,7 @@ body:
     id: command
     attributes:
       label: Command
-      placeholder: repolens build . --open
+      placeholder: wiringmap build . --open
   - type: input
     id: project
     attributes:
@@ -23,7 +23,7 @@ body:
     id: versions
     attributes:
       label: Versions
-      description: Output of `repolens --version` and `python --version`, and your operating system.
-      placeholder: repolens 0.1.0, Python 3.12.2, Ubuntu 24.04
+      description: Output of `wiringmap --version` and `python --version`, and your operating system.
+      placeholder: wiringmap 0.1.0, Python 3.12.2, Ubuntu 24.04
     validations:
       required: true

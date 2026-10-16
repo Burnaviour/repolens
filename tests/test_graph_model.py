@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from repolens.graph import SCHEMA_VERSION, CodeGraph, Edge, Node
+from wiringmap.graph import SCHEMA_VERSION, CodeGraph, Edge, Node
 
 
 def test_round_trip(sample_graph, tmp_path):
@@ -26,7 +26,7 @@ def test_output_is_sorted_and_versioned(sample_graph):
 def test_same_code_gives_same_graph(sample_graph):
     from conftest import SAMPLE_PROJECT
 
-    from repolens.builder import build_graph
+    from wiringmap.builder import build_graph
 
     again = json.loads(build_graph(SAMPLE_PROJECT).to_json())
     first = json.loads(sample_graph.to_json())

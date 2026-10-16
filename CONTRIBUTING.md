@@ -1,10 +1,10 @@
-# Contributing to repolens
+# Contributing to wiringmap
 
 Thanks for helping. Bug reports, ideas and pull requests are all welcome.
 
 ## Reporting a bug
 
-[Open an issue](https://github.com/Burnaviour/repolens/issues/new/choose) with the
+[Open an issue](https://github.com/Burnaviour/wiringmap/issues/new/choose) with the
 command you ran, what happened, and your Python version. If a specific project maps
 badly, a link to it (when it is public) is the most useful thing you can share.
 Please do not paste private code.
@@ -15,8 +15,8 @@ You need [uv](https://docs.astral.sh/uv/). Nothing else: the viewer has no build
 so there is no Node toolchain.
 
 ```bash
-git clone https://github.com/Burnaviour/repolens.git
-cd repolens
+git clone https://github.com/Burnaviour/wiringmap.git
+cd wiringmap
 uv sync
 uv run pytest
 uv run ruff check . && uv run ruff format --check .
@@ -24,14 +24,14 @@ uv run ruff check . && uv run ruff format --check .
 
 ## Working on it
 
-- **Analysis** (`src/repolens/scanner.py`, `src/repolens/parsers/`): add a small case
+- **Analysis** (`src/wiringmap/scanner.py`, `src/wiringmap/parsers/`): add a small case
   to `tests/fixtures/sample_project/` or a focused test with the `graph_of` fixture in
   `tests/conftest.py`, then make it pass.
-- **Viewer** (`src/repolens/render/static/`): edit `app.js` or `app.css`, then rebuild
+- **Viewer** (`src/wiringmap/render/static/`): edit `app.js` or `app.css`, then rebuild
   a report and look at it:
 
   ```bash
-  uv run repolens build . -o /tmp/repolens.html --open
+  uv run wiringmap build . -o /tmp/wiringmap.html --open
   ```
 
   Try a small project and a large one, in light and dark mode, and at phone width.
@@ -43,7 +43,7 @@ uv run ruff check . && uv run ruff format --check .
 
 - Keep each pull request focused on one change, with tests for analysis changes.
 - CI runs the tests on Python 3.10–3.13 and on Linux, macOS and Windows, plus `ruff`.
-- Vendored libraries in `src/repolens/render/static/vendor/` are unmodified copies; see
+- Vendored libraries in `src/wiringmap/render/static/vendor/` are unmodified copies; see
   the README there before updating one.
 
 ## Releasing (maintainers)

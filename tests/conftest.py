@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from repolens.builder import build_graph
-from repolens.graph import CodeGraph
+from wiringmap.builder import build_graph
+from wiringmap.graph import CodeGraph
 
 SAMPLE_PROJECT = Path(__file__).parent / "fixtures" / "sample_project"
 

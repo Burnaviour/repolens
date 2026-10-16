@@ -2,7 +2,7 @@
 
 This step looks at one file in isolation: what it defines, what it imports, what it
 calls and which types it hints at. Turning names into links between files happens
-later in :mod:`repolens.parsers.python_resolve`, once every file has been extracted.
+later in :mod:`wiringmap.parsers.python_resolve`, once every file has been extracted.
 """
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-"""The code graph: the single data structure every repolens feature reads and writes.
+"""The code graph: the single data structure every wiringmap feature reads and writes.
 
 Node ids follow one scheme so they are readable and never collide across kinds:
 
@@ -143,11 +143,11 @@ class CodeGraph:
         }
 
     def to_dict(self) -> dict[str, Any]:
-        from repolens import __version__
+        from wiringmap import __version__
 
         return {
             "schema_version": SCHEMA_VERSION,
-            "generator": {"name": "repolens", "version": __version__},
+            "generator": {"name": "wiringmap", "version": __version__},
             "root_name": self.root_name,
             "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
             "meta": self.meta,

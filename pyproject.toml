@@ -1,7 +1,7 @@
 [project]
-name = "repolens"
+name = "wiringmap"
 version = "0.1.0"
-description = "See how your codebase fits together: an interactive, offline map of any Python project."
+description = "See how your code is wired: an interactive, offline map of any Python project."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -31,13 +31,13 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Burnaviour/repolens"
-Documentation = "https://github.com/Burnaviour/repolens#readme"
-Changelog = "https://github.com/Burnaviour/repolens/blob/main/CHANGELOG.md"
-Issues = "https://github.com/Burnaviour/repolens/issues"
+Homepage = "https://github.com/Burnaviour/wiringmap"
+Documentation = "https://github.com/Burnaviour/wiringmap#readme"
+Changelog = "https://github.com/Burnaviour/wiringmap/blob/main/CHANGELOG.md"
+Issues = "https://github.com/Burnaviour/wiringmap/issues"
 
 [project.scripts]
-repolens = "repolens.cli:app"
+wiringmap = "wiringmap.cli:app"
 
 [build-system]
 requires = ["hatchling>=1.27"]

@@ -1,2 +1,2 @@
 # Third-party libraries bundled into the report; keep them out of GitHub's language stats.
-src/repolens/render/static/vendor/** linguist-vendored
+src/wiringmap/render/static/vendor/** linguist-vendored

@@ -13,5 +13,5 @@ wheels/
 .pytest_cache/
 .ruff_cache/
 
-# repolens output when run on itself
-.repolens/
+# wiringmap output when run on itself
+.wiringmap/

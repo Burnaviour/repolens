@@ -3,7 +3,7 @@ import sys
 
 import pytest
 
-from repolens.scanner import detect_language, scan_repository
+from wiringmap.scanner import detect_language, scan_repository
 
 
 def paths(root, **kwargs):

@@ -52,3 +52,12 @@ def test_scan_reports_unwritable_output_cleanly(make_repo):
     assert result.exit_code == 1
     assert "Could not write" in result.output
     assert "Traceback" not in result.output
+
+
+def test_folder_without_python_explains_instead_of_writing_an_empty_map(make_repo):
+    root = make_repo({"notes.md": "# hi\n", "data.json": "{}"})
+    for command in ("build", "scan"):
+        result = runner.invoke(app, [command, str(root)])
+        assert result.exit_code == 1
+        assert "No Python files found" in result.output
+    assert not (root / ".wiringmap").exists()

@@ -14,7 +14,7 @@ from rich.table import Table
 
 from wiringmap import __version__
 from wiringmap.builder import build_graph
-from wiringmap.graph import CodeGraph
+from wiringmap.graph import CodeGraph, NodeKind
 from wiringmap.render.html import SOURCE_BUDGET, collect_sources, render_report
 
 OUTPUT_DIR = ".wiringmap"
@@ -73,6 +73,7 @@ def scan(
 ) -> None:
     """Analyse a repository and write its code graph (graph.json)."""
     graph, elapsed = _scan(path, exclude, quiet)
+    _require_python(graph, path)
     if output == "-":
         typer.echo(graph.to_json())
     else:
@@ -112,6 +113,7 @@ def build(
 ) -> None:
     """Build an interactive map of a repository as one offline HTML file."""
     graph, elapsed = _scan(path, exclude, quiet)
+    _require_python(graph, path)
     sources = None
     if source is not False:
         sources = collect_sources(path, graph, limit=None if source else SOURCE_BUDGET)
@@ -150,6 +152,18 @@ def _scan(path: Path, exclude: list[str] | None, quiet: bool) -> tuple[CodeGraph
             progress=lambda done, total: bar.update(task, completed=done, total=total),
         )
     return graph, time.perf_counter() - started
+
+
+def _require_python(graph: CodeGraph, path: Path) -> None:
+    """Stop with a clear message instead of writing an empty map."""
+    if any(node.kind == NodeKind.MODULE for node in graph.nodes.values()):
+        return
+    err.print(
+        f"[yellow]No Python files found in {path}[/yellow] (files listed in .gitignore are "
+        "skipped).\nwiringmap maps Python projects: run it inside one, or pass its folder:\n"
+        "  wiringmap build path/to/project --open"
+    )
+    raise typer.Exit(1)
 
 
 def _output_dir(repo: Path) -> Path:

@@ -77,3 +77,8 @@ def test_detect_language():
     assert detect_language("x.PY") == "python"
     assert detect_language("Makefile") == "makefile"
     assert detect_language("x.unknown") is None
+
+
+def test_respects_git_info_exclude(make_repo):
+    root = make_repo({"app.py": "", "scratch/notes.py": "", ".git/info/exclude": "scratch/\n"})
+    assert paths(root) == ["app.py"]

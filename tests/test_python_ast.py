@@ -149,3 +149,21 @@ def test_syntax_error_is_recorded():
 def test_read_source_honours_coding_cookie():
     data = "# -*- coding: latin-1 -*-\nname = 'café'\n".encode("latin-1")
     assert "café" in read_source(data)
+
+
+def test_python_314_unparenthesized_except_is_accepted():
+    info = extract(
+        """
+        def load():
+            try:
+                fetch()
+            except ValueError, KeyError:
+                retry()
+            try:
+                fetch()
+            except* OSError, TimeoutError:
+                give_up()
+        """
+    )
+    assert info.error is None
+    assert {c.parts for c in info.functions["load"].calls} == {("fetch",), ("retry",), ("give_up",)}

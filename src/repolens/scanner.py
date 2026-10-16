@@ -88,14 +88,19 @@ def detect_language(name: str) -> str | None:
 def scan_repository(root: Path, exclude: Iterable[str] = ()) -> list[SourceFile]:
     """Return every recognised source file under ``root``, sorted by path.
 
-    Honours ``.gitignore`` files at every level, skips hidden entries, virtualenvs,
-    symlinks and the usual build/cache directories. ``exclude`` takes extra
-    gitignore-style patterns relative to ``root``.
+    Honours ``.gitignore`` files at every level and ``.git/info/exclude``, skips hidden
+    entries, virtualenvs, symlinks and the usual build/cache directories. ``exclude``
+    takes extra gitignore-style patterns relative to ``root``.
     """
     root = root.resolve()
     extra = pathspec.GitIgnoreSpec.from_lines(list(exclude))
     # Each entry is (directory relative to root, spec of the .gitignore in that directory).
+    # Git ranks .git/info/exclude below every .gitignore, so it goes first.
     specs: list[tuple[str, pathspec.GitIgnoreSpec]] = []
+    info_exclude = root / ".git" / "info" / "exclude"
+    if info_exclude.is_file():
+        lines = info_exclude.read_text(encoding="utf-8", errors="replace").splitlines()
+        specs.append(("", pathspec.GitIgnoreSpec.from_lines(lines)))
     found: list[SourceFile] = []
 
     def ignored(rel: str, is_dir: bool) -> bool:

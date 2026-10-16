@@ -190,7 +190,7 @@
   }
 
   // Folders that are rarely the first thing to read; they start closed.
-  const SIDE_FOLDERS = /^(tests?|testing|fixtures|examples?|docs?|benchmarks?|__snapshots__)$/i;
+  const SIDE_FOLDERS = /^(tests?|testing|fixtures|examples?|docs?|benchmarks?|__snapshots__|migrations?|alembic)$/i;
 
   // Open folders, shallowest first, while the map stays small enough to read.
   function initialExpanded() {
@@ -805,7 +805,7 @@
       <${Block} title="Calls" count=${calls.length} dot="out" hint=${calls.length ? null : "Calls nothing else in this project."}>
         <${CallRows} edges=${calls} side="out" onSelect=${onSelect} />
       </${Block}>
-      <${Block} title=${n.kind === "class" ? "Created or called by" : "Called by"} count=${calledBy.length} dot="in" hint=${calledBy.length ? null : "Nothing in this project calls it directly."}>
+      <${Block} title=${n.kind === "class" ? "Created or called by" : "Called by"} count=${calledBy.length} dot="in" hint=${calledBy.length ? null : a.entry_point ? calledFromOutside(n) : "Nothing in this project calls it directly. It may still run through a framework or callback."}>
         <${CallRows} edges=${calledBy} side="in" onSelect=${onSelect} />
       </${Block}>
       ${decoratedBy.length > 0 && html`<${Block} title="Decorated by" count=${decoratedBy.length}>
@@ -860,15 +860,53 @@
     </div>`;
   }
 
-  const ENTRY_POINTS = G.nodes.filter((n) => n.attrs && n.attrs.entry_point && (n.kind === "module" || SYMBOL.has(n.kind)));
+  // Tests, fixtures, docs and examples: real code, but rarely where you start reading.
+  const isSidePath = (path) => {
+    const parts = (path || "").split("/");
+    const file = parts.pop();
+    return parts.some((p) => SIDE_FOLDERS.test(p)) || /^(test_.*|.*_test|conftest)\.py$/.test(file);
+  };
+
+  // "@router.post('/login/access-token')" -> "POST /login/access-token"
+  function routeLabel(node) {
+    for (const d of (node.attrs && node.attrs.decorators) || []) {
+      const m = /\.(get|post|put|patch|delete|head|options|route|websocket|api_route)\(\s*(?:path\s*=\s*)?["']([^"']*)["']/.exec(d);
+      if (m) return `${m[1] === "route" || m[1] === "api_route" ? "" : m[1].toUpperCase() + " "}${m[2] || "/"}`;
+    }
+    return null;
+  }
+
+  const ENTRY_ORDER = { script: 0, "main-module": 1, "main-guard": 2, cli: 3, http: 4, task: 5 };
+  const entryKind = (n) => n.attrs.entry_point.split(":")[0];
+  const ALL_ENTRY_POINTS = G.nodes.filter((n) => n.attrs && n.attrs.entry_point && (n.kind === "module" || SYMBOL.has(n.kind)));
+  const ENTRY_POINTS = ALL_ENTRY_POINTS.filter((n) => !isSidePath(n.path)).sort(
+    (a, b) => (ENTRY_ORDER[entryKind(a)] ?? 9) - (ENTRY_ORDER[entryKind(b)] ?? 9) || (a.path || "").localeCompare(b.path || "") || (a.line || 0) - (b.line || 0)
+  );
+  const SIDE_ENTRY_POINTS = ALL_ENTRY_POINTS.length - ENTRY_POINTS.length;
+
+  function entryMeta(n) {
+    const kind = entryKind(n);
+    if (kind === "http") return routeLabel(n) || "web route";
+    if (kind === "script") return "command: " + n.attrs.entry_point.slice("script:".length);
+    return { "main-module": "python -m", "main-guard": "run as script", cli: "CLI command", task: "background task" }[kind] || kind;
+  }
+
+  function calledFromOutside(n) {
+    const kind = entryKind(n);
+    if (kind === "http") return `The web framework calls it for ${routeLabel(n) || "its route"}.`;
+    if (kind === "cli" || kind === "script") return "Runs when you use this command from the terminal.";
+    return "It is a starting point: it runs when the program starts.";
+  }
+
   const MOST_USED = G.nodes
-    .filter((n) => n.kind === "module")
+    .filter((n) => n.kind === "module" && !isSidePath(n.path))
     .map((n) => [n.id, (inn.imports.get(n.id) || []).filter((e) => kindOf(e.source) === "module").length])
     .filter(([, c]) => c > 0)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 6);
 
   function Welcome({ onSelect }) {
+    const [showAll, setShowAll] = useState(false);
     const s = G.stats || {};
     const when = G.created_at ? new Date(G.created_at).toLocaleString() : "";
     return html`<div class="pad welcome">
@@ -881,7 +919,10 @@
         <li><b>Press /</b> to search any file, class or function.</li>
       </ol>
       ${ENTRY_POINTS.length > 0 && html`<${Block} title="Start reading here" count=${ENTRY_POINTS.length}>
-        <ul class="list">${ENTRY_POINTS.slice(0, 12).map((n) => html`<${Row} id=${n.id} name=${n.kind === "module" ? n.path : qualOf(n.id)} meta=${n.attrs.entry_point} onSelect=${onSelect} />`)}</ul>
+        <p class="hint" style="margin-bottom:6px">Where the program starts: commands, scripts and web routes.</p>
+        <ul class="list">${ENTRY_POINTS.slice(0, showAll ? undefined : 15).map((n) => html`<${Row} id=${n.id} name=${n.kind === "module" ? n.path : qualOf(n.id)} meta=${entryMeta(n)} onSelect=${onSelect} />`)}</ul>
+        ${ENTRY_POINTS.length > 15 && html`<button class="btn" style="margin-top:6px" onClick=${() => setShowAll(!showAll)}>${showAll ? "Show fewer" : `Show all ${ENTRY_POINTS.length}`}</button>`}
+        ${SIDE_ENTRY_POINTS > 0 && html`<p class="hint" style="margin-top:6px">${plural(SIDE_ENTRY_POINTS, "more")} in tests, examples and docs.</p>`}
       </${Block}>`}
       ${MOST_USED.length > 0 && html`<${Block} title="Most imported files">
         <ul class="list">${MOST_USED.map(([id, c]) => html`<${Row} id=${id} name=${nodes.get(id).path} meta=${"used by " + c} onSelect=${onSelect} />`)}</ul>

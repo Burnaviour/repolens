@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import ast
 import io
+import re
 import tokenize
 from dataclasses import dataclass, field
 
@@ -112,13 +113,35 @@ def extract_module(path: str, source: str) -> ModuleInfo:
     info = ModuleInfo(qualname="", path=path)
     info.loc = sum(1 for line in source.splitlines() if line.strip())
     try:
-        tree = ast.parse(source, filename=path)
+        tree = _parse(source, path)
         info.docstring = _docstring(tree)
         _Extractor(info).visit_body(tree.body)
     except (SyntaxError, ValueError, RecursionError) as exc:
         # ValueError: null bytes in the source. RecursionError: pathologically deep nesting.
         info.error = f"{type(exc).__name__}: {exc}"
     return info
+
+
+# Python 3.14 (PEP 758) allows "except A, B:" without parentheses. Older interpreters
+# reject it, so on those we add the parentheses on that line and try again.
+_BARE_EXCEPT_TUPLE = re.compile(r"^(\s*except\*?\s+)([^:(\n][^:\n]*,[^:\n]*?)(\s+as\s+\w+)?\s*:")
+_MAX_SYNTAX_RETRIES = 50
+
+
+def _parse(source: str, path: str) -> ast.Module:
+    for _ in range(_MAX_SYNTAX_RETRIES):
+        try:
+            return ast.parse(source, filename=path)
+        except SyntaxError as exc:
+            if "must be parenthesized" not in str(exc.msg) or not exc.lineno:
+                raise
+            lines = source.split("\n")
+            fixed = _BARE_EXCEPT_TUPLE.sub(r"\1(\2)\3:", lines[exc.lineno - 1], count=1)
+            if fixed == lines[exc.lineno - 1]:
+                raise
+            lines[exc.lineno - 1] = fixed
+            source = "\n".join(lines)
+    return ast.parse(source, filename=path)
 
 
 def dotted_parts(node: ast.AST) -> Parts | None:

@@ -1,5 +1,8 @@
 import ast
+import sys
 import textwrap
+
+import pytest
 
 from repolens.parsers.python_ast import annotation_parts, extract_module, read_source
 
@@ -159,6 +162,17 @@ def test_python_314_unparenthesized_except_is_accepted():
                 fetch()
             except ValueError, KeyError:
                 retry()
+        """
+    )
+    assert info.error is None
+    assert {c.parts for c in info.functions["load"].calls} == {("fetch",), ("retry",)}
+
+
+@pytest.mark.skipif(sys.version_info < (3, 11), reason="except* needs Python 3.11")
+def test_python_314_unparenthesized_except_star_is_accepted():
+    info = extract(
+        """
+        def load():
             try:
                 fetch()
             except* OSError, TimeoutError:
@@ -166,4 +180,4 @@ def test_python_314_unparenthesized_except_is_accepted():
         """
     )
     assert info.error is None
-    assert {c.parts for c in info.functions["load"].calls} == {("fetch",), ("retry",), ("give_up",)}
+    assert {c.parts for c in info.functions["load"].calls} == {("fetch",), ("give_up",)}

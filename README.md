@@ -4,8 +4,9 @@
 map: what every file uses, what uses it, and what breaks if you change it. It runs
 offline, produces one HTML file, and needs no AI.
 
+[![PyPI](https://img.shields.io/pypi/v/wiringmap)](https://pypi.org/project/wiringmap/)
 [![CI](https://github.com/Burnaviour/wiringmap/actions/workflows/ci.yml/badge.svg)](https://github.com/Burnaviour/wiringmap/actions/workflows/ci.yml)
-[![Python 3.10–3.13](https://img.shields.io/badge/python-3.10%E2%80%933.13-blue)](pyproject.toml)
+[![Python 3.10–3.13](https://img.shields.io/badge/python-3.10%E2%80%933.13-blue)](https://pypi.org/project/wiringmap/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![Status: early](https://img.shields.io/badge/status-early%20preview-orange)
 
@@ -27,8 +28,11 @@ You need [uv](https://docs.astral.sh/uv/getting-started/installation/). Then, in
 any Python project:
 
 ```bash
-uvx --from git+https://github.com/Burnaviour/wiringmap wiringmap build . --open
+uvx wiringmap build . --open
 ```
+
+Or install it: `pip install wiringmap` (or `uv tool install wiringmap`), then run
+`wiringmap build . --open`.
 
 This writes `.wiringmap/report.html` and opens it in your browser. The `.wiringmap/`
 folder ignores itself, so it is never committed by accident.

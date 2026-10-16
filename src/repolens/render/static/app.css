@@ -191,9 +191,11 @@ code, pre, .mono { font-family: var(--mono); font-size: 12.5px; }
   background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
+.results { overflow-x: hidden; }
 .results li { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; cursor: pointer; min-width: 0; }
+.results li .mono { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .results li[aria-selected="true"] { background: var(--accent-weak); }
-.results .where { color: var(--faint); font-size: 12px; margin-left: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45%; }
+.results .where { flex: none; color: var(--faint); font-size: 12px; margin-left: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45%; direction: rtl; text-align: left; }
 .results .empty { color: var(--muted); cursor: default; }
 
 /* Main layout ----------------------------------------------------------------------- */

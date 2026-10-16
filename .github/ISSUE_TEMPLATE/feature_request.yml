@@ -1,0 +1,16 @@
+name: Idea or feature request
+description: Something repolens should show or do.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: What were you trying to understand?
+      description: The question about your codebase that repolens could not answer (for example "what happens when a user signs up?").
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help?
+      description: How you imagine repolens showing it. Rough ideas are fine.

@@ -1,7 +1,7 @@
 [project]
 name = "repolens"
 version = "0.1.0"
-description = "See how your (vibe-coded) codebase fits together: offline, interactive, AI optional."
+description = "See how your codebase fits together: an interactive, offline map of any Python project."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -9,7 +9,7 @@ authors = [
     { name = "Burnaviour", email = "meharmuzafar760@gmail.com" }
 ]
 requires-python = ">=3.10"
-keywords = ["visualization", "code-graph", "static-analysis", "architecture", "llm", "ollama"]
+keywords = ["code-visualization", "call-graph", "dependency-graph", "static-analysis", "architecture", "codebase", "vibe-coding", "developer-tools"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Environment :: Console",
@@ -32,6 +32,8 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/Burnaviour/repolens"
+Documentation = "https://github.com/Burnaviour/repolens#readme"
+Changelog = "https://github.com/Burnaviour/repolens/blob/main/CHANGELOG.md"
 Issues = "https://github.com/Burnaviour/repolens/issues"
 
 [project.scripts]
@@ -40,6 +42,10 @@ repolens = "repolens.cli:app"
 [build-system]
 requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.sdist]
+# An explicit list, so local folders (demo clones, private notes) can never be packaged.
+only-include = ["src", "tests", "docs", "README.md", "LICENSE", "CHANGELOG.md", "CONTRIBUTING.md"]
 
 [dependency-groups]
 dev = [
